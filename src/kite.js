@@ -32,16 +32,18 @@ class Kite {
 	constructor(anchorElementOrSelector, options) {
 		allKiteInstances.push(this);
 		this.anchor = getAnchor(anchorElementOrSelector);
+		this.options = Object.assign({
+			position: 'top',
+			closeX: true,
+			html: ''
+		}, options);
+
 		this.attached = false;
 		this.kite = fragment(kiteHtml).firstChild;
 		this.distance = 10;
 		this.showing = false;
 
-		this.options = Object.assign({
-			position: 'top',
-			closeX: true
-		}, options);
-
+		this.kite.querySelector('.js-kite-content').innerHTML = this.options.html;
 		this.anchor.addEventListener('click', this.show.bind(this));
 	}
 
