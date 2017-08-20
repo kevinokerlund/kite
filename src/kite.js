@@ -54,10 +54,12 @@ class Kite {
 
 	show() {
 		css.use();
-		document.body.appendChild(this.kite);
+		if (!this.attached) {
+			document.body.appendChild(this.kite);
+			this.attached = true;
+		}
 
 		this.showing = true;
-		this.attached = true;
 
 		this.kite.classList.add('Kite--show');
 		this.position();
