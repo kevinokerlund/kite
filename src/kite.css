@@ -7,6 +7,11 @@
 	left: 0;
 	box-sizing: border-box;
 	padding: 1px;
+	display: none;
+}
+
+.Kite.Kite--show {
+	display: block;
 }
 
 .Kite__border {
