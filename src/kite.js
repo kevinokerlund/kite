@@ -17,17 +17,13 @@ function addOrRemoveWindowEvents() {
 }
 
 function windowClick(e) {
-	let shoudClose = !!e.srcElement.closest('[data-kite-close]');
-	let anchorOrKiteElement;
-
-	if (!shoudClose) {
-		anchorOrKiteElement = allKiteInstances.find(kite => {
-			return (kite.anchor.contains(e.srcElement) || kite.kite.contains(e.srcElement));
-		});
-	}
-
 	Kite.each(kite => {
-		if (shoudClose || (!kite.options.stubborn && kite !== anchorOrKiteElement)) {
+		if (
+			!!e.srcElement.closest('[data-kite-close]') ||
+			!kite.options.stubborn &&
+			!kite.anchor.contains(e.srcElement) &&
+			!kite.kite.contains(e.srcElement)
+		) {
 			kite.hide();
 		}
 	});
