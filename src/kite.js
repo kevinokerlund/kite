@@ -27,7 +27,7 @@ function windowClick(e) {
 	}
 
 	Kite.each(kite => {
-		if (kite !== anchorOrKiteElement) {
+		if (shoudClose || (!kite.options.stubborn && kite !== anchorOrKiteElement)) {
 			kite.hide();
 		}
 	});
@@ -38,9 +38,10 @@ class Kite {
 		allKiteInstances.push(this);
 		this.anchor = getAnchor(anchorElementOrSelector);
 		this.options = Object.assign({
-			position: 'top',
 			closeX: true,
-			html: ''
+			html: '',
+			position: 'top',
+			stubborn: false,
 		}, options);
 
 		this.attached = false;
@@ -54,6 +55,11 @@ class Kite {
 
 	show() {
 		css.use();
+
+		if (this.showing) {
+			return this;
+		}
+
 		if (!this.attached) {
 			document.body.appendChild(this.kite);
 			this.attached = true;
