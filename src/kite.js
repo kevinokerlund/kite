@@ -4,6 +4,8 @@ import css from './kite.css';
 import {getAnchor} from './utils';
 import {positioner} from "./positioner";
 
+const noop = Function.prototype;
+
 let allKiteInstances = [];
 
 function addOrRemoveWindowEvents() {
@@ -22,7 +24,8 @@ function windowClick(e) {
 			!!e.srcElement.closest('[data-kite-close]') ||
 			!kite.options.stubborn &&
 			!kite.anchor.contains(e.srcElement) &&
-			!kite.kite.contains(e.srcElement)
+			!kite.kite.contains(e.srcElement) &&
+			kite.showing
 		) {
 			kite.hide();
 		}
@@ -41,7 +44,16 @@ class Kite {
 			stubborn: false,
 			tail: false,
 			x: false,
+
+			// lifecycle callbacks
+			afterCreation: noop,
+			afterAttachment: noop,
+			afterShow: noop,
+			afterHide: noop,
 		}, options);
+
+		this.options.afterShow = [this.options.afterShow];
+		this.options.afterHide = [this.options.afterHide];
 
 		this.attached = false;
 		this.showing = false;
@@ -56,6 +68,8 @@ class Kite {
 
 		this.parts.content.innerHTML = this.options.html;
 		this.anchor.addEventListener('click', this.show.bind(this));
+
+		this.options.afterCreation(this);
 
 		if (this.options.instant) {
 			this.show();
@@ -72,6 +86,7 @@ class Kite {
 		if (!this.attached) {
 			document.body.appendChild(this.kite);
 			this.attached = true;
+			this.options.afterAttachment(this);
 		}
 
 		this.showing = true;
@@ -80,6 +95,9 @@ class Kite {
 		this._setupX();
 		this._setupTail();
 		this.position();
+
+		this.options.afterShow.forEach(cb => cb(this));
+
 		addOrRemoveWindowEvents();
 	}
 
@@ -87,6 +105,9 @@ class Kite {
 		this.showing = false;
 		this.kite.classList.remove('Kite--show');
 		this.kite.style.zIndex = 'auto';
+
+		this.options.afterHide.forEach(cb => cb(this));
+
 		addOrRemoveWindowEvents();
 	}
 
@@ -96,6 +117,18 @@ class Kite {
 
 	destroy() {
 
+	}
+
+	onShow(cb) {
+		if (cb instanceof Function) {
+			this.options.afterShow.push(cb);
+		}
+	}
+
+	onHide(cb) {
+		if (cb instanceof Function) {
+			this.options.afterHide.push(cb);
+		}
 	}
 
 	_setupX() {
