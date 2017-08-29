@@ -34,19 +34,32 @@ class Kite {
 		allKiteInstances.push(this);
 		this.anchor = getAnchor(anchorElementOrSelector);
 		this.options = Object.assign({
-			closeX: true,
+			distance: 0,
 			html: '',
+			instant: false,
 			position: 'top',
 			stubborn: false,
+			tail: false,
+			x: false,
 		}, options);
 
 		this.attached = false;
-		this.kite = fragment(kiteHtml).firstChild;
-		this.distance = 10;
 		this.showing = false;
 
-		this.kite.querySelector('.js-kite-content').innerHTML = this.options.html;
+		this.kite = fragment(kiteHtml).firstChild;
+
+		this.parts = {
+			x: this.kite.querySelector('.js-kite-x'),
+			tail: this.kite.querySelector('.js-kite-tail'),
+			content: this.kite.querySelector('.js-kite-content'),
+		};
+
+		this.parts.content.innerHTML = this.options.html;
 		this.anchor.addEventListener('click', this.show.bind(this));
+
+		if (this.options.instant) {
+			this.show();
+		}
 	}
 
 	show() {
@@ -62,8 +75,10 @@ class Kite {
 		}
 
 		this.showing = true;
-
 		this.kite.classList.add('Kite--show');
+
+		this._setupX();
+		this._setupTail();
 		this.position();
 		addOrRemoveWindowEvents();
 	}
@@ -81,6 +96,14 @@ class Kite {
 
 	destroy() {
 
+	}
+
+	_setupX() {
+		this.parts.x.style.display = (this.options.x) ? '' : 'none';
+	}
+
+	_setupTail() {
+		this.parts.tail.style.display = (this.options.tail) ? '' : 'none';
 	}
 
 	static get fn() {

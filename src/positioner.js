@@ -13,19 +13,19 @@ export function positioner() {
 	if (position === 'top' || position === 'bottom') {
 		left = (anchorCoords.left - ((kiteRect.width - anchorRect.width) / 2)) + 'px';
 		if (position === 'top') {
-			top = (anchorCoords.top - kiteRect.height - this.distance) + 'px';
+			top = (anchorCoords.top - kiteRect.height - this.options.distance) + 'px';
 		}
 		else {
-			top = (anchorCoords.top + anchorRect.height + this.distance) + 'px';
+			top = (anchorCoords.top + anchorRect.height + this.options.distance) + 'px';
 		}
 	}
 	else {
 		top = (anchorCoords.top - ((kiteRect.height - anchorRect.height) / 2)) + 'px';
 		if (position === 'right') {
-			left = (anchorCoords.left + anchorRect.width + this.distance) + 'px';
+			left = (anchorCoords.left + anchorRect.width + this.options.distance) + 'px';
 		}
 		else {
-			left = (anchorCoords.left - kiteRect.width - this.distance) + 'px';
+			left = (anchorCoords.left - kiteRect.width - this.options.distance) + 'px';
 		}
 	}
 
