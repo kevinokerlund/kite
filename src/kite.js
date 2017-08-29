@@ -55,8 +55,11 @@ class Kite {
 		this.options.afterShow = [this.options.afterShow];
 		this.options.afterHide = [this.options.afterHide];
 
+		this._boundShow = this.show.bind(this);
+
 		this.attached = false;
 		this.showing = false;
+		this.destroyed = false;
 
 		this.kite = fragment(kiteHtml).firstChild;
 
@@ -67,7 +70,7 @@ class Kite {
 		};
 
 		this.parts.content.innerHTML = this.options.html;
-		this.anchor.addEventListener('click', this.show.bind(this));
+		this.anchor.addEventListener('click', this._boundShow);
 
 		this.options.afterCreation(this);
 
@@ -116,7 +119,21 @@ class Kite {
 	}
 
 	destroy() {
+		if (this.attached) {
+			this.kite.parentNode.removeChild(this.kite);
+		}
 
+		this.anchor.removeEventListener('click', this._boundShow);
+
+		allKiteInstances = allKiteInstances.filter(kite => kite !== this);
+
+		Object.keys(this).forEach(key => {
+			delete this[key];
+		});
+
+		this.destroyed = true;
+
+		addOrRemoveWindowEvents();
 	}
 
 	onShow(cb) {
