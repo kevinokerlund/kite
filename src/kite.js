@@ -21,10 +21,10 @@ function addOrRemoveWindowEvents() {
 function windowClick(e) {
 	Kite.each(kite => {
 		if (
-			!!e.srcElement.closest('[data-kite-close]') ||
+			!!e.target.closest('[data-kite-close]') ||
 			!kite.options.stubborn &&
-			!kite.anchor.contains(e.srcElement) &&
-			!kite.kite.contains(e.srcElement) &&
+			!kite.anchor.contains(e.target) &&
+			!kite.kite.contains(e.target) &&
 			kite.showing
 		) {
 			kite.hide();
