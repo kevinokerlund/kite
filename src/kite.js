@@ -1,6 +1,6 @@
 import fragment from 'Html-Fragment';
 import kiteHtml from './kite.html';
-import css from './kite.css';
+import './kite.css';
 import {getAnchor} from './utils';
 import {positioner} from "./positioner";
 
@@ -80,8 +80,6 @@ class Kite {
 	}
 
 	show() {
-		css.use();
-
 		if (this.showing) {
 			return this;
 		}
