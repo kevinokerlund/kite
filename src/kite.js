@@ -1,20 +1,26 @@
 import fragment from 'Html-Fragment';
 import kiteHtml from './kite.html';
 import './kite.css';
-import {getAnchor} from './utils';
+import {RafBounce, getAnchor} from './utils';
 import {positioner} from "./positioner";
 
 const noop = Function.prototype;
 
 let allKiteInstances = [];
 
+const rafBouncedReposition = RafBounce(() => Kite.each(kite => kite.position()));
+
 function addOrRemoveWindowEvents() {
 	let kitesShowing = allKiteInstances.filter(kite => kite.showing);
 	if (kitesShowing.length) {
 		window.addEventListener('click', windowClick);
+		window.addEventListener('resize', rafBouncedReposition);
+		window.addEventListener('scroll', rafBouncedReposition);
 	}
 	else {
 		window.removeEventListener('click', windowClick);
+		window.removeEventListener('resize', rafBouncedReposition);
+		window.removeEventListener('scroll', rafBouncedReposition);
 	}
 }
 
@@ -55,8 +61,6 @@ class Kite {
 		this.options.afterShow = [this.options.afterShow];
 		this.options.afterHide = [this.options.afterHide];
 
-		this._boundShow = this.show.bind(this);
-
 		this.attached = false;
 		this.showing = false;
 		this.destroyed = false;
@@ -70,7 +74,7 @@ class Kite {
 		};
 
 		this.parts.content.innerHTML = this.options.html;
-		this.anchor.addEventListener('click', this._boundShow);
+		this.anchor.addEventListener('click', ::this.show);
 
 		this.options.afterCreation(this);
 
@@ -113,7 +117,9 @@ class Kite {
 	}
 
 	position() {
-		positioner.call(this);
+		if (this.showing) {
+			positioner.call(this);
+		}
 	}
 
 	destroy() {
