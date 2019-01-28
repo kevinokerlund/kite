@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+
+	<style>
+		body {
+			height: 3000px;
+		}
+	</style>
+</head>
+<body>
+
+<script>
+
+class Bouncer {
+	constructor(callback) {
+		this.callback = callback;
+		this.ticking = false;
+	}
+
+	update(args) {
+		this.ticking = false;
+		this.callback && this.callback(...args);
+	}
+
+	requestTick(args) {
+		if (!this.ticking) {
+			this.ticking = true;
+			window.requestAnimationFrame(this.update.bind(this, args));
+		}
+		else {
+			console.log('Bail!');
+		}
+	}
+
+	handle(...args) {
+		this.requestTick(args);
+	}
+}
+
+function RafBounce(callback) {
+	const instance = new Bouncer(callback);
+	return instance.handle.bind(instance);
+}
+
+let go = true;
+
+let test = new RafBounce((cont) => {
+	if (cont()) {
+		console.log('ran');
+		test(cont);
+	}
+}).bind(null, () => go);
+
+window.addEventListener('scroll', test);
+
+test();
+test();
+test();
+test();
+
+setTimeout(() => {
+	go = false;
+}, 1000);
+
+</script>
+
+</body>
+</html>
